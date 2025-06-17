@@ -204,74 +204,23 @@ export default class BuilderService {
   }
 
   static getCkeConf(tokenCallback) {
-    const tokens = Mautic.getTokensForPlugIn(tokenCallback);
-    let options = {
-      toolbar: {
-        items: [
-          'undo', 'redo', '|',
-          'bold','italic', 'underline','strikethrough', '|',
-          'fontSize','fontFamily','fontColor','fontBackgroundColor', '|',
-          'alignment','outdent', 'indent', '|',
-          'blockQuote', 'insertTable', '|',
-          'bulletedList','numberedList', '|',
-          'link', '|',
-          'TokenPlugin', '|',
-          'sourceEditing',
-        ],
-        shouldNotGroupWhenFull: true,
-      },
-      fontFamily: {
-        options: Mautic.getCKEditorFonts(mauticEditorFonts),
-      },
-      fontSize: {
-        options: [8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 72],
-        supportAllValues : true,
-      },
-      autosave: {
-        save: (editor) => {
-          editor.updateSourceElement();
-        }
-      },
-      table: {
-        contentToolbar: [
-          'tableColumn',
-          'tableRow',
-          'mergeTableCells'
-        ]
-      },
-      htmlSupport: {
-        allow: [
-          {
-            name: 'img',
-            attributes: ['style'],
-            styles: true,
-          }
-        ],
-      },
-      image: {
-        insert: {
-          type: 'inline',
-          integrations: ['url']
-        }
-      },
-      extraPlugins: [Mautic.MentionLinks],
-      dynamicTokenLabel: 'Insert token',
-      dynamicToken: tokens,
-      mention: {
-        feeds: [
-          {
-            marker: '{',
-            feed: Mautic.getFeedItems,
-            itemRenderer: Mautic.customItemRenderer
-          }
-        ]
+    const ckEditorToolbarOptions = ['undo', 'redo', '|', 'bold','italic', 'underline','strikethrough', '|', 'fontSize','fontFamily','fontColor','fontBackgroundColor', '|' ,'alignment','outdent', 'indent', '|', 'blockQuote', 'insertTable', '|', 'bulletedList','numberedList', '|', 'link', '|', 'TokenPlugin'];
+    let ret = Mautic.GetCkEditorConfigOptions(ckEditorToolbarOptions, tokenCallback);
+
+    ret.htmlSupport.allow.push({
+      name: 'img',
+      attributes: 'styles',
+      styles: true,
+    });
+
+    ret.image = {
+      insert: {
+        type: 'inline',
+        integrations: ['url']
       }
     };
 
-    return {
-      ckeditor_module: `${mauticBaseUrl}assets/ckeditor/build/ckeditor.js`,
-      options:  options
-    };
+    return ret;
   }
 
   /**
